@@ -1,0 +1,23 @@
+{
+    "supabase_key": "",
+    "supabase_url": "",
+    "supabase2_key": "",
+    "supabase2_url": "",
+    "acc": "",
+    "acc_key": "",
+    "webhook": "",
+    "toptix_col": "",
+    "toptix_schema": "",
+    "toptix_tid": 0,
+    "toptix_choices": [],
+    "token_sym": "",
+    "token_contract": "",
+    "token_precision": 0,
+    "custodial": [],
+    "aa": "",
+    "aa_key": "",
+    "rpc": "",
+    "rpc_key": "",
+    "logs": "",
+    "mention": ""
+}
