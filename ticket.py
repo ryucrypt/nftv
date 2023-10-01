@@ -44,9 +44,29 @@ ACTION = {
     }
 }
 LOG = "ticket_log"
+BLOCK = "blocklist_main"
 RETRY = 3
 SLEEP = 1
 LIMIT = 5
+TIMEOUT = 60
+
+def get_block():
+    retry_count = 0
+    while retry_count < RETRY:
+        try:
+            r = requests.get(
+                ENV["supabase_url"] + BLOCK + "?select=*",
+                headers=HEADERS,
+                timeout=TIMEOUT
+            )
+            r.raise_for_status()
+            return r.json()
+        except Exception as err:
+            retry_count += 1
+            if retry_count >= RETRY:
+                raise err
+            else:
+                sleep(SLEEP)
 
 def get_assets(collection, template_id, page):
     retry_count = 0
@@ -55,7 +75,7 @@ def get_assets(collection, template_id, page):
             r = requests.get(
                 AH.format(ENV["aa"], collection, template_id, page),
                 headers={"apikey": ENV["aa_key"]},
-                timeout=60
+                timeout=TIMEOUT
             )
             r.raise_for_status()
             return r.json()["data"]
@@ -74,7 +94,7 @@ def upload_log(data):
                 ENV["supabase_url"] + LOG,
                 headers=HEADERS,
                 json=data,
-                timeout=60
+                timeout=TIMEOUT
             )
             r.raise_for_status()
             break
@@ -125,6 +145,7 @@ try:
     tid = ENV["toptix_tid"]
     tickets =[i["template_id"] for i in ENV["toptix_choices"]]
     weights = [i["weight"] for i in ENV["toptix_choices"]]
+    block = get_block()
 
     while True:
         try:
@@ -141,7 +162,8 @@ try:
         actions = []
         assets = []
         for index, i in enumerate(data):
-            if i["owner"] == None or int(i["asset_id"]) in SKIP:
+            bl_check = [item for item in block if item["collection"] == i["owner"]]
+            if i["owner"] == None or int(i["asset_id"]) in SKIP or len(bl_check) > 0:
                 logger.info(f"{i['owner']} - {i['asset_id']}: Skipped")
                 continue
             choice = random.choices(tickets, weights=weights)[0]
