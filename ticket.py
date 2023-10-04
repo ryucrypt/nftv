@@ -166,6 +166,11 @@ try:
             if i["owner"] == None or int(i["asset_id"]) in SKIP or len(bl_check) > 0:
                 logger.info(f"{i['owner']} - {i['asset_id']}: Skipped")
                 continue
+            if "data" in i["mutable_data"] and i["mutable_data"]["data"] != "":
+                recipient = json.loads(i["mutable_data"]["data"])
+                if len(recipient) > 0 and recipient[0]["recipient"] != i["owner"]:
+                    logger.info(f"{i['owner']} - {i['asset_id']}: Wrong owner, skipped")
+                    continue
             choice = random.choices(tickets, weights=weights)[0]
             action = copy.deepcopy(ACTION)
             action["authorization"][0]["actor"] = ENV["acc"]
