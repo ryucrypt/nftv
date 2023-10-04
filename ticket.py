@@ -188,9 +188,9 @@ try:
                 except Exception as err:
                     try:
                         error = json.loads(str(err).replace("transaction error: ", ""))
-                        msg = f"Minting failed for {','.join([item for item in assets])} - {error['error']['details'][0]['message']}"
+                        msg = f"Minting failed for {','.join([str(item) for item in assets])} - {error['error']['details'][0]['message']}"
                     except:
-                        msg = f"Minting failed for {','.join([item for item in assets])} - {str(err)}"
+                        msg = f"Minting failed for {','.join([str(item) for item in assets])} - {str(err)}"
                     logger.exception(msg, exc_info=err)
                     post_alert("fail", NAME, msg)
                     actions = []
