@@ -68,7 +68,10 @@ def update_timestamp():
             r = requests.post(
                 ENV["supabase_url"] + CONFIG,
                 headers=HEADERS,
-                json=[{"pawsome_update": f"{int(datetime.now().timestamp())}"}],
+                json=[{
+                    "config": "pawsome_update",
+                    "value": f"{int(datetime.now().timestamp())}"
+                }],
                 timeout=TIMEOUT
             )
             r.raise_for_status()
@@ -99,6 +102,7 @@ try:
     page = 1
     while True:
         try:
+            logger.info(f"Fetching page {page}")
             data = get_assets(page)
             if len(data) < 1:
                 break
